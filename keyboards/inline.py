@@ -17,3 +17,8 @@ def show_langs_kb(page: int = 1, start: int = 0, finish: int = 9):
         InlineKeyboardButton('>', callback_data=f'next:{page}:{start}:{finish}:{total_pages}')
     )
     return kb
+
+
+def delete_translation_kb(translation_id):
+    kb = InlineKeyboardMarkup()
+    kb.add(InlineKeyboardButton(text='Удалить', callback_data=f'delete:{translation_id}'))
