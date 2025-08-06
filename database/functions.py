@@ -24,6 +24,8 @@ def create_users_table():
     '''
     cursor.execute(sql)
     connection.commit()
+    cursor.execute('ALTER TABLE users ADD COLUMN IF NOT EXISTS username TEXT')
+    connection.commit()
     print('users table created')
 
 
@@ -45,16 +47,16 @@ def create_translations_table():
     print('translations table created')
 
 
-def add_user(chat_id):
+def add_user(chat_id, username):
     connection, cursor = connect()
 
     sql = """
-        INSERT INTO users(chat_id)
-        VALUES (%s)
+        INSERT INTO users(chat_id, username)
+        VALUES (%s, %s)
         ON CONFLICT (chat_id)
-        DO NOTHING;
+        DO UPDATE SET username = %s;
     """
-    cursor.execute(sql, (chat_id,))
+    cursor.execute(sql, (chat_id,username, username))
     connection.commit()
     print(f'user with {chat_id=} added')
 
@@ -100,3 +102,28 @@ def add_translation(lang_from, lang_to, original, translated, chat_id):
     print(f'translation for user with {chat_id=} added')
 
 
+def delete_translation(translation_id):
+    connection, cursor = connect()
+
+    sql = 'DELETE FROM translations WHERE id = %s;'
+    cursor.execute(sql, (translation_id,))
+    connection.commit()
+    print(f'translation with {translation_id=} deleted')
+
+
+def get_all_users():
+    connection, cursor = connect()
+    sql = 'SELECT chat_id, username FROM users;'
+    cursor.execute(sql)
+    users = cursor.fetchall()
+    return users
+
+
+def get_user_chat_id(user_id):
+    connection, cursor = connect()
+    sql = 'SELECT chat_id FROM users WHERE id = %s;'
+    cursor.execute(sql, (user_id,))
+    chat_id = cursor.fetchone()
+    if chat_id is None:
+        return None
+    return chat_id[0]

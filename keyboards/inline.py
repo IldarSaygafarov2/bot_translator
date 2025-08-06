@@ -19,6 +19,20 @@ def show_langs_kb(page: int = 1, start: int = 0, finish: int = 9):
     return kb
 
 
-def delete_translation_kb(translation_id):
+def delete_translation_kb(translation_id, chat_id=None):
     kb = InlineKeyboardMarkup()
-    kb.add(InlineKeyboardButton(text='Удалить', callback_data=f'delete:{translation_id}'))
+    callback_data = f'delete:{translation_id}' if chat_id is None else f'delete:{translation_id}:{chat_id}'
+    kb.add(InlineKeyboardButton(text='Удалить', callback_data=callback_data))
+    return kb
+
+
+def show_users_kb(users):
+    kb = InlineKeyboardMarkup(row_width=1)
+    result = []
+    for chat_id, username in users:
+        result.append(
+            InlineKeyboardButton(text=username, callback_data=f'user:{chat_id}')
+        )
+    kb.add(*result)
+    return kb
+

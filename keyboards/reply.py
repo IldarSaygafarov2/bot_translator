@@ -4,6 +4,11 @@ from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 from googletrans import LANGUAGES
 
 
+def show_admin_start_kb():
+    kb = ReplyKeyboardMarkup(resize_keyboard=True)
+    kb.row(KeyboardButton(text='Пользователи'))
+    return kb
+
 
 def show_start_kb():
     kb = ReplyKeyboardMarkup(resize_keyboard=True)
